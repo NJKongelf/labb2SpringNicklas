@@ -16,10 +16,12 @@ public class Product {
     Long id;
     String name;
     Long weightInKg;
+    int price;
 
-    public Product(Long id,String name,Long weightInKg){
+    public Product(Long id,String name,Long weightInKg,int price){
         this.id=id;
         this.name=name;
         this.weightInKg=weightInKg;
+        this.price=price;
     }
 }
