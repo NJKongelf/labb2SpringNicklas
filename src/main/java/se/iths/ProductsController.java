@@ -25,7 +25,7 @@ public class ProductsController {
 
     @GetMapping
     public CollectionModel<EntityModel<Product>> all() {
-        log.debug("All persons called");
+        log.debug("All Products listed");
         return assembler.toCollectionModel(repository.findAll());
     }
 
@@ -38,9 +38,9 @@ public class ProductsController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createPerson(@RequestBody Product person) {
-        log.info("POST create Product " + person);
-        var p = repository.save(person);
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        log.info("POST create Product " + product);
+        var p = repository.save(product);
         log.info("Saved to repository " + p);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(linkTo(ProductsController.class).slash(p.getId()).toUri());
@@ -49,7 +49,7 @@ public class ProductsController {
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<?> deletePerson(@PathVariable Long id) {
+    ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         if (repository.existsById(id)) {
             //log.info("Product deleted");
             repository.deleteById(id);
@@ -59,30 +59,30 @@ public class ProductsController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Product> replacePerson(@RequestBody Product newPerson, @PathVariable Long id) {
+    ResponseEntity<Product> replaceProduct(@RequestBody Product newProducts, @PathVariable Long id) {
         return repository.findById(id)
-                .map(person -> {
-                    person.setName(newPerson.getName());
-                    repository.save(person);
+                .map(product -> {
+                    product.setName(newProducts.getName());
+                    repository.save(product);
                     HttpHeaders headers = new HttpHeaders();
-                    headers.setLocation(linkTo(ProductsController.class).slash(person.getId()).toUri());
-                    return new ResponseEntity<>(person, headers, HttpStatus.OK);
+                    headers.setLocation(linkTo(ProductsController.class).slash(product.getId()).toUri());
+                    return new ResponseEntity<>(product, headers, HttpStatus.OK);
                 })
                 .orElseGet(() ->
                         new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PatchMapping("/{id}")
-    ResponseEntity<Product> modifyPerson(@RequestBody Product newPerson, @PathVariable Long id) {
+    ResponseEntity<Product> modifyPerson(@RequestBody Product newProduct, @PathVariable Long id) {
         return repository.findById(id)
-                .map(person -> {
-                    if (newPerson.getName() != null)
-                        person.setName(newPerson.getName());
+                .map(product -> {
+                    if (newProduct.getName() != null)
+                        product.setName(newProduct.getName());
 
-                    repository.save(person);
+                    repository.save(product);
                     HttpHeaders headers = new HttpHeaders();
-                    headers.setLocation(linkTo(ProductsController.class).slash(person.getId()).toUri());
-                    return new ResponseEntity<>(person, headers, HttpStatus.OK);
+                    headers.setLocation(linkTo(ProductsController.class).slash(product.getId()).toUri());
+                    return new ResponseEntity<>(product, headers, HttpStatus.OK);
                 })
                 .orElseGet(() ->
                         new ResponseEntity<>(HttpStatus.NOT_FOUND));
