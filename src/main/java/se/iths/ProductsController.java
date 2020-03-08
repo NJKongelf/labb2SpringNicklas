@@ -44,7 +44,6 @@ public class ProductsController {
         log.info("Saved to repository " + p);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(linkTo(ProductsController.class).slash(p.getId()).toUri());
-        //headers.add("Location", "/api/persons/" + p.getId());
         return new ResponseEntity<>(p, headers, HttpStatus.CREATED);
     }
 
@@ -73,7 +72,7 @@ public class ProductsController {
     }
 
     @PatchMapping("/{id}")
-    ResponseEntity<Product> modifyPerson(@RequestBody Product newProduct, @PathVariable Long id) {
+    ResponseEntity<Product> modifyProduct(@RequestBody Product newProduct, @PathVariable Long id) {
         return repository.findById(id)
                 .map(product -> {
                     if (newProduct.getName() != null)
