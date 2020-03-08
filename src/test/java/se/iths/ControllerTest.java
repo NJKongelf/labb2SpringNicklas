@@ -1,32 +1,35 @@
 package se.iths;
 
 import org.junit.jupiter.api.*;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContext;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.List;
 import java.util.Optional;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@WithMockUser(username="admin",roles={"USER","ADMIN"})
+@WithUserDetails
 @WebMvcTest(ProductsController.class)
 @Import({ProductsModelAssembler.class})
+
 public class ControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -47,7 +50,7 @@ public class ControllerTest {
 
 
     }
-    @Test
+   @Test
     void getAllReturnsListOfAllProducts() throws Exception {
         mockMvc.perform(
                 get("/api/product").contentType("application/hal+json"))
@@ -56,7 +59,7 @@ public class ControllerTest {
                 .andExpect(jsonPath("_embedded.productList[0].name", is("Tesla Model s")));
       }
 
-    @Test
+   @Test
     @DisplayName("Calls Get method with invalid id url /api/product/3")
     void getOneProductWithInValidIdThree() throws Exception {
         mockMvc.perform(
@@ -68,15 +71,15 @@ public class ControllerTest {
     @DisplayName("Calls post new products")
     void addNewProductWithPostReturnsCreatedProduct() throws Exception {
         mockMvc.perform(
-                post("/api/product/")
+                post("/api/product/").with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"id\":0,\"name\":\"Moon\"}"))
                 .andExpect(status().isCreated());
     }
-    @Test
+  @Test
     void deleteProductAndReturnsOk() throws Exception {
         mockMvc.perform(
-                delete("/api/product/3"))
+                delete("/api/product/3").with(csrf()))
                 .andExpect(status().isOk());
     }
 }

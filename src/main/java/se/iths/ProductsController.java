@@ -62,6 +62,8 @@ public class ProductsController {
         return repository.findById(id)
                 .map(product -> {
                     product.setName(newProducts.getName());
+                    product.setWeightInKg(newProducts.getWeightInKg());
+                    product.setPrice(newProducts.getPrice());
                     repository.save(product);
                     HttpHeaders headers = new HttpHeaders();
                     headers.setLocation(linkTo(ProductsController.class).slash(product.getId()).toUri());
